@@ -29,7 +29,7 @@ regex == 2019.2.7
 
 # githubpy/githubpy.py: 11
 # githubpy/social_commons/text_analytics.py: 10,19,20
-requests == 2.20.0
+requests == 2.20.1
 
 # githubpy/comment_util.py: 18,19,20
 # githubpy/commenters_util.py: 11,23
