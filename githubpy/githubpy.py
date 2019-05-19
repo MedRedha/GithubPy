@@ -101,7 +101,7 @@ class GithubPy:
             cli_args.bypass_suspicious_attempt or bypass_suspicious_attempt)
         bypass_with_mobile = cli_args.bypass_with_mobile or bypass_with_mobile
 
-        FACEBOOKPY_IS_RUNNING = True
+        IS_RUNNING = True
         # workspace must be ready before anything
         if not get_workspace(Settings):
             raise SocialPyError(
@@ -122,8 +122,8 @@ class GithubPy:
         self.bypass_with_mobile = bypass_with_mobile
         self.disable_image_load = disable_image_load
 
-        self.username = username or os.environ.get('FACEBOOK_USER')
-        self.password = password or os.environ.get('FACEBOOK_PW')
+        self.username = username or os.environ.get('GITHUB_USER')
+        self.password = password or os.environ.get('GITHUB_PW')
 
         self.userid = userid
         if not self.userid:
