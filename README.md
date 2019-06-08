@@ -42,3 +42,20 @@ pip install -r requirements.txt
                                   interact=True)
  ```
 
+ 
+## How to run:
+
+ -  modify `quickstart.py` according to your requirements
+ -  `python quickstart.py -u <my_github_username> -p <mypssword>`
+
+
+## How to schedule as a job:
+
+```bash
+    */10 * * * * bash /path/to/GithubPy/run_githubpy_only_once_for_mac.sh /path/to/GithubPy/quickstart.py $USERNAME $PASSWORD
+```
+
+
+
+
+
