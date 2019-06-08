@@ -20,7 +20,7 @@ pip install -r requirements.txt
  
 ```python
 
- session = TwitterPy()
+ session = GithubPy()
 
  with smart_run(session):
     session.follow_user_followers(random_targets,
@@ -33,7 +33,7 @@ pip install -r requirements.txt
  
 ```python
 
- session = TwitterPy()
+ session = GithubPy()
 
  with smart_run(session):
     session.follow_user_following(random_targets,
