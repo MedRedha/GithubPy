@@ -1,5 +1,5 @@
 """ Module which handles the follow features like unfollowing and following """
-import time
+# import time
 from datetime import datetime
 import os
 import random
@@ -23,7 +23,7 @@ from socialcommons.util import find_user_id
 # from socialcommons.util import explicit_wait
 # from socialcommons.util import get_username_from_id
 from socialcommons.util import is_page_available
-from socialcommons.util import reload_webpage
+# from socialcommons.util import reload_webpage
 from socialcommons.util import click_visibly
 from socialcommons.util import get_action_delay
 from socialcommons.util import truncate_float
@@ -33,12 +33,12 @@ from socialcommons.print_log_writer import log_uncertain_unfollowed_pool
 from socialcommons.print_log_writer import log_record_all_unfollowed
 from socialcommons.print_log_writer import get_log_time
 from .relationship_tools import get_followers
-# from .relationship_tools import get_nonfollowers
+from .relationship_tools import get_nonfollowers
 from socialcommons.database_engine import get_database
 from socialcommons.quota_supervisor import quota_supervisor
 from .settings import Settings
 
-from selenium.common.exceptions import WebDriverException
+# from selenium.common.exceptions import WebDriverException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotVisibleException
 
@@ -422,10 +422,10 @@ def unfollow(browser,
             return 0
 
         # scroll down the page to get sufficient amount of usernames
-        get_users_through_dialog(browser, None, username, amount,
-                                 allfollowing, False, None, None,
-                                 None, {"enabled": False, "percentage": 0},
-                                 "Unfollow", jumps, logger, logfolder)
+        # get_users_through_dialog(browser, None, username, amount,
+        #                          allfollowing, False, None, None,
+        #                          None, {"enabled": False, "percentage": 0},
+        #                          "Unfollow", jumps, logger, logfolder)
 
         # find dialog box
         dialog = browser.find_element_by_xpath(
@@ -751,7 +751,7 @@ def get_given_user_followers(browser,
         logger.error("`followers_link` error {}".format(str(e)))
         return [], []
 
-    channel = "Follow"
+    # channel = "Follow"
 
     # TODO: Fix it: Add simulated
     simulated_list = []
@@ -853,7 +853,7 @@ def get_given_user_following(browser,
         logger.error("`following_link` error {}".format(str(e)))
         return [], []
 
-    channel = "Follow"
+    # channel = "Follow"
 
     # TODO: Fix it: Add simulated
     simulated_list = []
