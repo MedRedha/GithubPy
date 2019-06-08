@@ -33,7 +33,7 @@ from socialcommons.print_log_writer import log_uncertain_unfollowed_pool
 from socialcommons.print_log_writer import log_record_all_unfollowed
 from socialcommons.print_log_writer import get_log_time
 from .relationship_tools import get_followers
-from .relationship_tools import get_nonfollowers
+# from .relationship_tools import get_nonfollowers
 from socialcommons.database_engine import get_database
 from socialcommons.quota_supervisor import quota_supervisor
 from .settings import Settings
@@ -108,25 +108,25 @@ from selenium.common.exceptions import ElementNotVisibleException
 #     return automatedFollowedPool
 
 
-def get_following_status(browser, track, username, person, person_id, logger,
-                         logfolder):
+def get_following_status(browser, track, username, person, person_id, logger, logfolder):
     """ Verify if you are following the user in the loaded page """
     if track == "profile":
         ig_homepage = "https://github.com/"
-        web_address_navigator( browser, ig_homepage + person, Settings)
-    follow_button_XP = "//div/div/div/span/span[1]/form/button"
-    unfollow_button_XP = "//div/div/div/span/span[2]/form/button"
+        web_address_navigator(browser, ig_homepage + person, Settings)
 
-    # follow_unfollow_button_XP = "//div/div/div/span/span/form/button"
+    follow_button_XP = "//div/div/div/span/span[1]/form/input[3]"
+    unfollow_button_XP = "//div/div/div/span/span[2]/form/input[3]"
+
     follow_button = browser.find_element_by_xpath(follow_button_XP)
     if follow_button:
-        logger.info("get_following_status:follow_button:text:{}, button:{}".format(follow_button.text, follow_button))
-        return follow_button.text, follow_button
+        # .setAttribute("value", "your value");
+        logger.info("get_following_status:follow_button:text:{}, button:{}".format(follow_button.get_attribute('value'), follow_button))
+        return follow_button.get_attribute('value'), follow_button
 
     unfollow_button = browser.find_element_by_xpath(unfollow_button_XP)
     if unfollow_button:
-        logger.info("get_following_status:unfollow_button:text:{}, button:{}".format(unfollow_button.text, unfollow_button))
-        return unfollow_button.text, unfollow_button
+        logger.info("get_following_status:unfollow_button:text:{}, button:{}".format(unfollow_button.get_attribute('value'), unfollow_button))
+        return unfollow_button.get_attribute('value'), unfollow_button
 
     return None, None
 
@@ -217,7 +217,8 @@ def unfollow(browser,
         elif nonFollowers is True:
             logger.info("Unfollowing the users who do not follow back\n")
             """  Unfollow only the users who do not follow you back """
-            unfollow_list = get_nonfollowers(browser,
+            #LETS UNFOLLOW THE FOLLOWES INSTEAD
+            unfollow_list = get_followers(browser,
                                              username,
                                              relationship_data,
                                              False,

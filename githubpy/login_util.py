@@ -10,6 +10,7 @@ from socialcommons.util import update_activity
 from socialcommons.util import web_address_navigator
 from socialcommons.util import reload_webpage
 from socialcommons.util import click_element
+from socialcommons.util import explicit_wait
 # from socialcommons.util import check_authorization
 from .settings import Settings
 
@@ -173,14 +174,7 @@ def login_user(browser,
     # include time.sleep(1) to prevent getting stuck on google.com
     time.sleep(1)
 
-    # changes github website language to english to use english xpaths
-    if switch_language:
-        links = browser.find_elements_by_xpath('//*[@id="pageFooter"]/ul/li')
-        for link in links:
-            if link.get_attribute('title') == "English (UK)":
-                click_element(browser, Settings, link)
-
-    web_address_navigator( browser, ig_homepage, Settings)
+    web_address_navigator(browser, ig_homepage, Settings)
     reload_webpage(browser, Settings)
 
     # cookie has been LOADED, so the user SHOULD be logged in
@@ -193,12 +187,14 @@ def login_user(browser,
     #                                 logger,
     #                                 logfolder,
     #                                 True)
-
-    profile_pic = browser.find_element_by_xpath('//*[@id="user-links"]/li[3]/details/summary/img')
-
-    if profile_pic:
-        login_state = True
-    else:
+    try:
+        profile_pic = browser.find_element_by_xpath('//header/div[8]/details/summary/img')
+        if profile_pic:
+            login_state = True
+        else:
+            login_state = False
+    except Exception as e:
+        print(e)
         login_state = False
 
     print('login_state:', login_state)
@@ -296,15 +292,34 @@ def login_user(browser,
         bypass_suspicious_login(browser, bypass_with_mobile)
 
     # wait until page fully load
-    # explicit_wait(browser, "PFL", [], logger, 5)
+    explicit_wait(browser, "PFL", [], logger, 5)
 
-    # Check if user is logged-in (If there's two 'nav' elements)
-    nav = browser.find_elements_by_xpath('//div[@role="navigation"]')
-    if len(nav) == 2:
-        # create cookie for username
-        print('logged in')
-        pickle.dump(browser.get_cookies(), open(
-            '{0}{1}_cookie.pkl'.format(logfolder, username), 'wb'))
-        return True
-    else:
-        return False
+    try:
+        profile_pic = browser.find_element_by_xpath('//header/div[8]/details/summary/img')
+        if profile_pic:
+            login_state = True
+            print('logged in')
+            pickle.dump(browser.get_cookies(), open(
+                '{0}{1}_cookie.pkl'.format(logfolder, username), 'wb'))
+        else:
+            login_state = False
+    except Exception as e:
+        print(e)
+        login_state = False
+
+    # try:
+    #     username_tag = browser.find_element_by_xpath('//*[@id="account-switcher-left"]/summary/span')
+    #     print(username_tag.text)
+    #     if username_tag.text == username:
+    #         # create cookie for username
+    #         print('logged in')
+    #         pickle.dump(browser.get_cookies(), open(
+    #             '{0}{1}_cookie.pkl'.format(logfolder, username), 'wb'))
+    #         return True
+    #     else:
+    #         return False
+    # except Exception:
+    #     return False
+    
+    return login_state
+

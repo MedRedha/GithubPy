@@ -9,6 +9,7 @@ __pycache__/
 
 quickstart.py
 docker_quickstart.py
+run_githubpy_only_once_for_mac_headed.sh
 
 # C extensions
 *.so
