@@ -15,6 +15,7 @@ pip install -r requirements.txt
 ##  APIs:
   - [follow user followers](#follow-user-followers)
   - [follow user following](#follow-user-following)
+  - [copy contributors](#copy-contributors)
 
 ### follow user followers
  

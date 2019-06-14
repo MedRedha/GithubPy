@@ -67,7 +67,6 @@ from selenium.common.exceptions import NoSuchElementException
 from socialcommons.exceptions import SocialPyError
 from .settings import Settings
 
-
 class GithubPy:
     """Class to be instantiated to use the script"""
     def __init__(self,
@@ -947,7 +946,9 @@ class GithubPy:
         users = []
         invited = 0
         for contributor_tag in contributors_tag:
-            users.append(contributor_tag.get_attribute('href').split('/')[3])
+            user = contributor_tag.get_attribute('href').split('/')[3]
+            print("Collected => {}".format(user))
+            users.append(user)
 
         re_loggedin = False
 
@@ -957,7 +958,6 @@ class GithubPy:
             try:
                 self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 invite_button = self.browser.find_element_by_css_selector("div.add-member-wrapper.settings-next > form > div.clearfix > button")
-                print(invite_button.text)
                 if invite_button.text.strip()=='Send invitation':
                     (ActionChains(self.browser)
                      .move_to_element(invite_button)
@@ -969,6 +969,8 @@ class GithubPy:
                         invited += 1
                 elif invite_button.text.strip()=='Update invitation':
                     print('Already Invited')
+                else:
+                    print(invite_button.text)
             except Exception as e:
                 print(e)
                 if re_loggedin:
@@ -1002,7 +1004,7 @@ class GithubPy:
                     print(e)
                 #if password screen doesnt happen on first iteration it wont come, so lets make it true going forward
                 re_loggedin = True
-            print('Invitations sent in this iteration {}'.format(invited))
+            print('Invitations sent in this iteration till now: {}'.format(invited))
             print("=====")
             if invited >= 100:
                 print('Enough inviting for today.. Returning')
