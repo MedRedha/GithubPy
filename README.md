@@ -42,7 +42,19 @@ pip install -r requirements.txt
                                   interact=True)
  ```
 
+### copy contributors
  
+```python
+
+ session = GithubPy()
+
+ with smart_run(session):
+ 
+    session.copy_contributors(source_user="timgrossmann",
+                              source_repo="InstaPy",
+                              dest_organisation="socialbotspy")
+ ```
+
 ## How to run:
 
  -  modify `quickstart.py` according to your requirements

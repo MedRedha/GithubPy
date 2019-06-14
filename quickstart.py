@@ -30,6 +30,10 @@ with smart_run(session):
     else:
         random_targets = random.sample(targets, number)
 
+    session.copy_contributors(source_user="timgrossmann",
+                              source_repo="InstaPy",
+                              dest_organisation="socialbotspy")
+
     session.follow_user_followers(random_targets,
                                   amount=random.randint(30, 60),
                                   randomize=True, sleep_delay=600,

@@ -11,6 +11,8 @@ import os
 # import requests
 # from selenium import webdriver
 # from selenium.webdriver import DesiredCapabilities
+from selenium.webdriver.common.action_chains import ActionChains
+
 from pyvirtualdisplay import Display
 import logging
 from contextlib import contextmanager
@@ -30,7 +32,7 @@ from socialcommons.time_util import sleep
 # from socialcommons.time_util import set_sleep_percentage
 # from socialcommons.util import get_active_users
 from socialcommons.util import validate_userid
-# from socialcommons.util import web_address_navigator
+from socialcommons.util import web_address_navigator
 from socialcommons.util import interruption_handler
 from socialcommons.util import highlight_print
 # from socialcommons.util import dump_record_activity
@@ -934,6 +936,77 @@ class GithubPy:
     #                                         self.blacklist,
     #                                         self.logger,
     #                                         self.logfolder)
+
+    def copy_contributors(self, source_user, source_repo, dest_organisation, sleep_delay=6):
+        web_address_navigator(self.browser, "https://github.com/{}/{}/graphs/contributors".format(source_user, source_repo), Settings)
+        delay_random = random.randint(
+            ceil(sleep_delay * 0.85),
+            ceil(sleep_delay * 1.14))
+
+        contributors_tag = self.browser.find_elements_by_css_selector("#contributors > ol > li > span > h3 > a.text-normal")
+        users = []
+        invited = 0
+        for contributor_tag in contributors_tag:
+            users.append(contributor_tag.get_attribute('href').split('/')[3])
+
+        re_loggedin = False
+
+        for user in users:
+            print("Checking {}".format(user))
+            web_address_navigator(self.browser, "https://github.com/orgs/{}/invitations/{}/edit".format(dest_organisation, user), Settings)
+            try:
+                self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                invite_button = self.browser.find_element_by_css_selector("div.add-member-wrapper.settings-next > form > div.clearfix > button")
+                print(invite_button.text)
+                if invite_button.text.strip()=='Send invitation':
+                    (ActionChains(self.browser)
+                     .move_to_element(invite_button)
+                     .click()
+                     .perform())
+                    sleep(delay_random)
+                    if self.browser.current_url=='https://github.com/orgs/socialbotspy/people':
+                        print('Invitation successfully sent')
+                        invited += 1
+                elif invite_button.text.strip()=='Update invitation':
+                    print('Already Invited')
+            except Exception as e:
+                print(e)
+                if re_loggedin:
+                    continue
+                print("Checking for password")
+                try:
+                    input_password = self.browser.find_element_by_xpath('//*[@id="password"]')
+                    if input_password:
+                        print("Password field found")
+                        if not isinstance(self.password, str):
+                            self.password = str(self.password)
+                        print('entering input_password')
+                        (ActionChains(self.browser)
+                         .move_to_element(input_password[0])
+                         .click()
+                         .send_keys(self.password)
+                         .perform())
+
+                        sleep(1)
+
+                        print('submitting login_button')
+                        login_button = self.browser.find_element_by_xpath('//*[@type="submit"]')
+
+                        (ActionChains(self.browser)
+                         .move_to_element(login_button)
+                         .click()
+                         .perform())
+
+                        re_loggedin = True
+                except Exception as e:
+                    print(e)
+                #if password screen doesnt happen on first iteration it wont come, so lets make it true going forward
+                re_loggedin = True
+            print('Invitations sent in this iteration {}'.format(invited))
+            print("=====")
+            if invited >= 100:
+                print('Enough inviting for today.. Returning')
+                return
 
     def follow_by_list(self, followlist, times=1, sleep_delay=600,
                        interact=False):
