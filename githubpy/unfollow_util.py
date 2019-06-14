@@ -42,72 +42,6 @@ from .settings import Settings
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotVisibleException
 
-
-# def set_automated_followed_pool(username, unfollow_after, logger, logfolder):
-#     """ Generare a user list based on the GithubPy followed usernames """
-#     pool_name = "{0}{1}_followedPool.csv".format(logfolder, username)
-#     automatedFollowedPool = {"all": {}, "eligible": {}}
-#     time_stamp = None
-#     user_id = "undefined"  # 'undefined' rather than None is *intentional
-
-#     try:
-#         with open(pool_name, 'r+') as followedPoolFile:
-#             reader = csv.reader(followedPoolFile)
-
-#             for row in reader:
-#                 entries = row[0].split(' ~ ')
-#                 sz = len(entries)
-#                 """
-#                 Data entry styles [historically]:
-#                     user,   # oldest
-#                     datetime ~ user,   # after `unfollow_after` was introduced
-#                     datetime ~ user ~ user_id,   # after `user_id` was added
-#                 """
-#                 if sz == 1:
-#                     time_stamp = None
-#                     user = entries[0]
-
-#                 elif sz == 2:
-#                     time_stamp = entries[0]
-#                     user = entries[1]
-
-#                 elif sz == 3:
-#                     time_stamp = entries[0]
-#                     user = entries[1]
-#                     user_id = entries[2]
-
-#                 automatedFollowedPool["all"].update({user: {"id": user_id}})
-#                 # get eligible list
-#                 if unfollow_after is not None and time_stamp:
-#                     try:
-#                         log_time = datetime.strptime(time_stamp,
-#                                                      '%Y-%m-%d %H:%M')
-#                     except ValueError:
-#                         continue
-
-#                     former_epoch = (log_time - datetime(1970, 1,
-#                                                         1)).total_seconds()
-#                     cur_epoch = (datetime.now() - datetime(1970, 1,
-#                                                            1)).total_seconds()
-
-#                     if cur_epoch - former_epoch > unfollow_after:
-#                         automatedFollowedPool["eligible"].update(
-#                             {user: {"id": user_id}})
-
-#                 else:
-#                     automatedFollowedPool["eligible"].update(
-#                         {user: {"id": user_id}})
-
-#         followedPoolFile.close()
-
-#     except BaseException as exc:
-#         logger.error(
-#             "Error occurred while generating a user list from the followed "
-#             "pool!\n\t{}".format(str(exc).encode("utf-8")))
-
-#     return automatedFollowedPool
-
-
 def get_following_status(browser, track, username, person, person_id, logger, logfolder):
     """ Verify if you are following the user in the loaded page """
     if track == "profile":
@@ -651,30 +585,6 @@ def follow_user(browser, track, login, userid_to_follow, button, blacklist,
     return True, "success"
 
 
-# def scroll_to_bottom_of_followers_list(browser, element):
-#     browser.execute_script(
-#         "arguments[0].children[1].scrollIntoView()", element)
-#     sleep(1)
-#     return
-
-# def dialog_username_extractor(buttons):
-#     """ Extract username of a follow button from a dialog box """
-
-#     if not isinstance(buttons, list):
-#         buttons = [buttons]
-
-#     person_list = []
-#     for person in buttons:
-#         if person and hasattr(person, 'text') and person.text:
-#             try:
-#                 person_list.append(person.find_element_by_xpath("../../../*")
-#                                    .find_elements_by_tag_name("a")[1].text)
-#             except IndexError:
-#                 pass  # Element list is too short to have a [1] element
-
-#     return person_list
-
-
 def get_given_user_followers(browser,
                              login,
                              user_name,
@@ -985,7 +895,6 @@ def follow_restriction(operation, username, limit, logger):
             # close the open connection
             conn.close()
 
-
 def unfollow_user(browser, track, username, userid, person, person_id, button,
                   relationship_data, logger, logfolder, Settings):
     """ Unfollow a user either from the profile or post page or dialog box """
@@ -1100,7 +1009,6 @@ def confirm_unfollow(browser):
                 sleep(1)
                 pass
 
-
 def post_unfollow_cleanup(state, username, person, relationship_data,
                           person_id, logger, logfolder):
     """ Casual local data cleaning after an unfollow """
@@ -1127,23 +1035,6 @@ def post_unfollow_cleanup(state, username, person, relationship_data,
     log_record_all_unfollowed(username, person, logger, logfolder)
     print('')
 
-
-# def get_buttons_from_dialog(dialog, channel):
-#     """ Gets buttons from the `Followers` or `Following` dialog boxes"""
-
-#     if channel == "Follow":
-#         # get follow buttons. This approach will find the follow buttons and
-#         # ignore the Unfollow/Requested buttons.
-#         buttons = dialog.find_elements_by_xpath(
-#             "//button[text()='Follow']")
-
-#     elif channel == "Unfollow":
-#         buttons = dialog.find_elements_by_xpath(
-#             "//button[text() = 'Following']")
-
-#     return buttons
-
-
 def get_user_id(browser, track, username, logger):
     """ Get user's ID either from a profile page or post page """
     user_id = "unknown"
@@ -1153,37 +1044,6 @@ def get_user_id(browser, track, username, logger):
         user_id = find_user_id(Settings, browser, track, username, logger)
 
     return user_id
-
-
-# def verify_username_by_id(browser, username, person, person_id, logger,
-#                           logfolder):
-#     """ Check if the given user has changed username after the time of
-#     followed """
-#     # try to find the user by ID
-#     if person_id is None:
-#         person_id = load_user_id(username, person, logger, logfolder)
-
-#     if person_id and person_id not in [None, "unknown", "undefined"]:
-#         # get the [new] username of the user from the stored user ID
-#         person_new = get_username_from_id(browser, "https://www.github.com", person_id, logger)
-#         if person_new:
-#             if person_new != person:
-#                 logger.info(
-#                     "User '{}' has changed username and now is called '{}' :S"
-#                     .format(person, person_new))
-#             return person_new
-
-#         else:
-#             logger.info(
-#                 "The user with the ID of '{}' is unreachable".format(person))
-
-#     else:
-#         logger.info(
-#             "The user ID of '{}' doesn't exist in local records".format(
-#                 person))
-
-#     return None
-
 
 def verify_action(browser, action, track, username, person, person_id, logger,
                   logfolder):
@@ -1216,55 +1076,5 @@ def verify_action(browser, action, track, username, person, person_id, logger,
         logger.info("button_change:WTF")
     return False, "unexpected"
 
-
 def post_unfollow_actions(browser, person, logger):
     pass
-
-
-# def get_follow_requests(browser, amount, sleep_delay, logger, logfolder):
-#     """ Get follow requests from github access tool list """
-
-#     user_link = "https://www.github.com/accounts/access_tool" \
-#                 "/current_follow_requests"
-#     web_address_navigator( browser, user_link, Settings)
-
-#     list_of_users = []
-#     view_more_button_exist = True
-#     view_more_clicks = 0
-
-#     while len(
-#             list_of_users) < amount and view_more_clicks < 750 and \
-#             view_more_button_exist:
-#         sleep(4)
-#         list_of_users = browser.find_elements_by_xpath("//section/div")
-
-#         if len(list_of_users) == 0:
-#             logger.info("There are not outgoing follow requests")
-#             break
-
-#         try:
-#             view_more_button = browser.find_element_by_xpath(
-#                 "//button[text()='View More']")
-#         except NoSuchElementException:
-#             view_more_button_exist = False
-
-#         if view_more_button_exist:
-#             logger.info(
-#                 "Found '{}' outgoing follow requests, Going to ask for more..."
-#                 .format(len(list_of_users))
-#             )
-#             click_element(browser, Settings, view_more_button)
-#             view_more_clicks += 1
-
-#     users_to_unfollow = []
-
-#     for user in list_of_users:
-#         users_to_unfollow.append(user.text)
-#         if len(users_to_unfollow) == amount:
-#             break
-
-#     logger.info(
-#         "Found '{}' outgoing follow requests '{}'"
-#         .format(len(users_to_unfollow), users_to_unfollow))
-
-#     return users_to_unfollo
