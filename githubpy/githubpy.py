@@ -448,24 +448,22 @@ class GithubPy:
                 else:
                     print(invite_button.text)
             except Exception as e:
-                print(e)
+                self.logger.error(e)
                 if re_loggedin:
                     continue
                 print("Checking for password")
                 try:
-                    input_password = self.browser.find_element_by_xpath('//*[@id="password"]')
+                    input_password = self.browser.find_element_by_xpath('//*[@id="sudo_password"]')
                     if input_password:
                         print("Password field found")
-                        if not isinstance(self.password, str):
-                            self.password = str(self.password)
                         print('entering input_password')
                         (ActionChains(self.browser)
-                         .move_to_element(input_password[0])
+                         .move_to_element(input_password)
                          .click()
                          .send_keys(self.password)
                          .perform())
 
-                        sleep(1)
+                        sleep(delay_random*0.3)
 
                         print('submitting login_button')
                         login_button = self.browser.find_element_by_xpath('//*[@type="submit"]')
@@ -475,9 +473,10 @@ class GithubPy:
                          .click()
                          .perform())
 
+                        sleep(delay_random)
                         re_loggedin = True
                 except Exception as e:
-                    print(e)
+                    self.logger.error(e)
                 #if password screen doesnt happen on first iteration it wont come, so lets make it true going forward
                 re_loggedin = True
             print('Invitations sent in this iteration till now: {}'.format(invited))

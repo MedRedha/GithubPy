@@ -34,6 +34,9 @@ with smart_run(session):
                               source_repo="InstaPy",
                               dest_organisation="socialbotspy")
 
+    session.search_and_copy_contributors(search_query="instagram bot",
+                            dest_organisation="socialbotspy")
+
     session.follow_user_followers(random_targets,
                                   amount=random.randint(30, 60),
                                   randomize=True, sleep_delay=600,
