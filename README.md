@@ -16,6 +16,7 @@ pip install -r requirements.txt
   - [follow user followers](#follow-user-followers)
   - [follow user following](#follow-user-following)
   - [copy contributors](#copy-contributors)
+  - [search and copy contributors](#search-and-copy-contributors)
 
 ### follow user followers
  
@@ -44,16 +45,30 @@ pip install -r requirements.txt
  ```
 
 ### copy contributors
- 
+
+Invites all contributors of a given repo
+
 ```python
 
  session = GithubPy()
 
  with smart_run(session):
- 
     session.copy_contributors(source_user="timgrossmann",
                               source_repo="InstaPy",
                               dest_organisation="socialbotspy")
+ ```
+
+### search and copy contributors
+
+Same as above, just that you dont need to explicitly find repos. It uses `copy_contributors` internally
+
+```python
+
+ session = GithubPy()
+
+ with smart_run(session):
+    session.search_and_copy_contributors(search_query="instagram bot",
+                                        dest_organisation="socialbotspy")
  ```
 
 ## How to run:

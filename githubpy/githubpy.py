@@ -397,6 +397,21 @@ class GithubPy:
 
         return self
 
+    def search_and_copy_contributors(self, search_query, dest_organisation, sleep_delay=6):
+        search_query = '+'.join(search_query.split())
+        web_address_navigator(self.browser, "https://github.com/search?l=Python&p=2&q={}&type=Repositories".format(search_query), Settings)
+        repo_tags = self.browser.find_elements_by_css_selector("div > div.codesearch-results > div > ul > li > div > h3 > a")
+        hrefs = []
+        for repo_tag in repo_tags:
+            hrefs.append(repo_tag.get_attribute('href'))
+
+        for href in hrefs:
+            print("Copying contributors of ~------> {}".format(href))
+            self.copy_contributors(source_user=href.split('/')[3],
+                    source_repo=href.split('/')[4],
+                    dest_organisation=dest_organisation,
+                    sleep_delay=sleep_delay)
+
     def copy_contributors(self, source_user, source_repo, dest_organisation, sleep_delay=6):
         web_address_navigator(self.browser, "https://github.com/{}/{}/graphs/contributors".format(source_user, source_repo), Settings)
         delay_random = random.randint(
