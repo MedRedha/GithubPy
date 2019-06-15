@@ -485,8 +485,7 @@ class GithubPy:
                 print('Enough inviting for today.. Returning')
                 return
 
-    def follow_by_list(self, followlist, times=1, sleep_delay=600,
-                       interact=False):
+    def follow_by_list(self, followlist, times=1, sleep_delay=600, interact=False):
         """Allows to follow by any scrapped list"""
         if not isinstance(followlist, list):
             followlist = [followlist]
@@ -687,11 +686,7 @@ class GithubPy:
 
         return comments
 
-    def interact_by_users(self,
-                          usernames,
-                          amount=10,
-                          randomize=False,
-                          media=None):
+    def interact_by_users(self, usernames amount=10, randomize=False, media=None):
         """Likes some amounts of images for each usernames"""
         if self.aborting:
             return self
@@ -833,12 +828,7 @@ class GithubPy:
 
         return self
 
-    def follow_user_followers(self,
-                              usernames,
-                              amount=10,
-                              randomize=False,
-                              interact=False,
-                              sleep_delay=600):
+    def follow_user_followers(self, usernames, amount=10, randomize=False, interact=False, sleep_delay=600):
         """ Follow the `Followers` of given users """
         if self.aborting:
             return self
@@ -1004,12 +994,7 @@ class GithubPy:
 
         return self
 
-    def follow_user_following(self,
-                              usernames,
-                              amount=10,
-                              randomize=False,
-                              interact=False,
-                              sleep_delay=600):
+    def follow_user_following(self, usernames, amount=10, randomize=False, interact=False, sleep_delay=600):
         """ Follow the `Following` of given users """
         if self.aborting:
             return self
