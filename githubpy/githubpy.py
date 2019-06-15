@@ -67,6 +67,8 @@ from selenium.common.exceptions import NoSuchElementException
 from socialcommons.exceptions import SocialPyError
 from .settings import Settings
 
+ROW_HEIGHT = 105#TODO: ROW_HEIGHT is actuallly variable in gihub so added buffer 5 to delay the failure.
+
 class GithubPy:
     """Class to be instantiated to use the script"""
     def __init__(self,
@@ -102,8 +104,6 @@ class GithubPy:
             cli_args.bypass_suspicious_attempt or bypass_suspicious_attempt)
         bypass_with_mobile = cli_args.bypass_with_mobile or bypass_with_mobile
 
-        # IS_RUNNING = True
-        # workspace must be ready before anything
         if not get_workspace(Settings):
             raise SocialPyError(
                 "Oh no! I don't have a workspace to work at :'(")
@@ -397,6 +397,41 @@ class GithubPy:
 
         return self
 
+    def unfollow_users(self, amount, sleep_delay=6):
+        web_address_navigator(self.browser, "https://github.com/{}?tab=following".format(self.username), Settings)
+
+        delay_random = random.randint(
+            ceil(sleep_delay * 0.85),
+            ceil(sleep_delay * 1.14))
+        unfollowed = 0
+        failed = 0
+
+        self.logger.info('Unfollowing {} users'.format(amount))
+        unfollow_buttons = self.browser.find_elements_by_css_selector("div > div > div.position-relative > div > div > span > span.unfollow > form > input.btn")
+        for i, unfollow_button in enumerate(unfollow_buttons):
+            try:
+                self.browser.execute_script("window.scrollTo(0, " + str(ROW_HEIGHT*i) + ");")
+                if unfollow_button.get_attribute('value').strip()=='Unfollow':
+                    (ActionChains(self.browser)
+                     .move_to_element(unfollow_button)
+                     .click()
+                     .perform())
+                    sleep(delay_random)
+                    unfollowed += 1
+                    self.logger.info('Unfollowed {} successfully'.format(unfollowed))
+                    sleep(delay_random)
+                else:
+                    print(unfollow_button.get_attribute('value'))
+                if unfollowed >= amount:
+                    self.logger.warning('Too many unfollowed for today.. Returning')
+                    return
+                if failed >= 6:
+                    self.logger.warning('Too many failures.. Returning')
+                    return
+            except Exception as e:
+                failed +=1
+                self.logger.error(e)
+
     def search_and_copy_contributors(self, search_query, dest_organisation, sleep_delay=6):
         search_query = '+'.join(search_query.split())
         web_address_navigator(self.browser, "https://github.com/search?l=Python&p=2&q={}&type=Repositories".format(search_query), Settings)
@@ -686,7 +721,7 @@ class GithubPy:
 
         return comments
 
-    def interact_by_users(self, usernames amount=10, randomize=False, media=None):
+    def interact_by_users(self, usernames, amount=10, randomize=False, media=None):
         """Likes some amounts of images for each usernames"""
         if self.aborting:
             return self

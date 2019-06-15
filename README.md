@@ -17,6 +17,7 @@ pip install -r requirements.txt
   - [follow user following](#follow-user-following)
   - [copy contributors](#copy-contributors)
   - [search and copy contributors](#search-and-copy-contributors)
+  = [unfollow users](#unfollow-users)
 
 ### follow user followers
  
@@ -70,6 +71,17 @@ Same as above, just that you dont need to explicitly find repos. It uses `copy_c
     session.search_and_copy_contributors(search_query="instagram bot",
                                         dest_organisation="socialbotspy")
  ```
+
+### unfollow users
+
+```python
+
+ session = GithubPy()
+
+ with smart_run(session):
+    session.unfollow_users(amount=random.randint(30, 50))
+ ```
+
 
 ## How to run:
 
