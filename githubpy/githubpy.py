@@ -68,6 +68,7 @@ from socialcommons.exceptions import SocialPyError
 from .settings import Settings
 
 ROW_HEIGHT = 105#TODO: ROW_HEIGHT is actuallly variable in gihub so added buffer 5 to delay the failure.
+ROWS_PER_PAGE = 50
 
 class GithubPy:
     """Class to be instantiated to use the script"""
@@ -397,40 +398,82 @@ class GithubPy:
 
         return self
 
-    def unfollow_users(self, amount, sleep_delay=6):
+    def move_to_next_page(self, pageno, skip=False, sleep_delay=6):
+        delay_random = random.randint(
+            ceil(sleep_delay * 0.85),
+            ceil(sleep_delay * 1.14))
+
+        self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        page_links = self.browser.find_elements_by_css_selector("div > div > div.position-relative > div.paginate-container > div > a")
+        next_link = page_links[-1]
+        if next_link.text.strip()=='Next':
+            (ActionChains(self.browser)
+             .move_to_element(next_link)
+             .click()
+             .perform())
+            sleep(delay_random)
+            if skip:
+                self.logger.info('Skipped {} users'.format(ROWS_PER_PAGE+pageno*ROWS_PER_PAGE))
+            else:
+                self.logger.info('Moved to page {}'.format(pageno))
+            sleep(delay_random)
+            return True
+        else:
+            print(next_link.text)
+            return False
+
+    def unfollow_users(self, amount, skip=100, sleep_delay=6):
         web_address_navigator(self.browser, "https://github.com/{}?tab=following".format(self.username), Settings)
+        start_pageno = int(skip/ROWS_PER_PAGE) + 1
 
         delay_random = random.randint(
             ceil(sleep_delay * 0.85),
             ceil(sleep_delay * 1.14))
         unfollowed = 0
         failed = 0
+        pageno = 1
+
+        for i in range(0, start_pageno-1):
+            if self.move_to_next_page(pageno=i, skip=True, sleep_delay=sleep_delay):
+                pageno += 1
+
+        if pageno != start_pageno:
+            self.logger.info("Currentpage = {}, Couldnt move to desired page {}..Returning".format(pageno, start_pageno))
+            return
 
         self.logger.info('Unfollowing {} users'.format(amount))
-        unfollow_buttons = self.browser.find_elements_by_css_selector("div > div > div.position-relative > div > div > span > span.unfollow > form > input.btn")
-        for i, unfollow_button in enumerate(unfollow_buttons):
-            try:
-                self.browser.execute_script("window.scrollTo(0, " + str(ROW_HEIGHT*i) + ");")
-                if unfollow_button.get_attribute('value').strip()=='Unfollow':
-                    (ActionChains(self.browser)
-                     .move_to_element(unfollow_button)
-                     .click()
-                     .perform())
-                    sleep(delay_random)
-                    unfollowed += 1
-                    self.logger.info('Unfollowed {} successfully'.format(unfollowed))
-                    sleep(delay_random)
-                else:
-                    print(unfollow_button.get_attribute('value'))
-                if unfollowed >= amount:
-                    self.logger.warning('Too many unfollowed for today.. Returning')
-                    return
-                if failed >= 6:
-                    self.logger.warning('Too many failures.. Returning')
-                    return
-            except Exception as e:
-                failed +=1
-                self.logger.error(e)
+
+        while pageno <= start_pageno + amount/ROWS_PER_PAGE:
+            self.logger.info('Browsing page {}'.format(pageno))
+            unfollow_buttons = self.browser.find_elements_by_css_selector("div > div > div.position-relative > div > div > span > span.unfollow > form > input.btn")
+            for i, unfollow_button in enumerate(unfollow_buttons):
+                try:
+                    self.browser.execute_script("window.scrollTo(0, " + str(ROW_HEIGHT*i) + ");")
+                    if pageno == start_pageno and ROWS_PER_PAGE*(start_pageno-1) + i + 1 <= skip:
+                        self.logger.info('Skipped {} users'.format(ROWS_PER_PAGE*(start_pageno-1) + i + 1))
+                        continue
+                    if unfollow_button.get_attribute('value').strip()=='Unfollow':
+                        (ActionChains(self.browser)
+                         .move_to_element(unfollow_button)
+                         .click()
+                         .perform())
+                        sleep(delay_random)
+                        unfollowed += 1
+                        self.logger.info('Unfollowed {} successfully'.format(unfollowed))
+                        sleep(delay_random)
+                    else:
+                        print(unfollow_button.get_attribute('value'))
+                    if unfollowed >= amount:
+                        self.logger.warning('Too many unfollowed for today.. Returning')
+                        return
+                    if failed >= 6:
+                        self.logger.warning('Too many failures.. Returning')
+                        return
+                except Exception as e:
+                    failed +=1
+                    self.logger.error(e)
+            pageno += 1
+            self.move_to_next_page(pageno=pageno, sleep_delay=sleep_delay)
 
     def search_and_copy_contributors(self, search_query, dest_organisation, sleep_delay=6):
         search_query = '+'.join(search_query.split())

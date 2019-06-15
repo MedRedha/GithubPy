@@ -79,7 +79,7 @@ Same as above, just that you dont need to explicitly find repos. It uses `copy_c
  session = GithubPy()
 
  with smart_run(session):
-    session.unfollow_users(amount=random.randint(30, 50))
+    session.unfollow_users(amount=random.randint(30, 50), skip=100)
  ```
 
 

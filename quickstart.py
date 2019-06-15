@@ -47,4 +47,5 @@ with smart_run(session):
                                   randomize=True, sleep_delay=600,
                                   interact=True)
 
-    session.unfollow_users(amount=random.randint(30, 50))
+    session.unfollow_users(amount=random.randint(30, 50), skip=100)
+
