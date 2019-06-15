@@ -473,7 +473,8 @@ class GithubPy:
                     failed +=1
                     self.logger.error(e)
             pageno += 1
-            self.move_to_next_page(pageno=pageno, sleep_delay=sleep_delay)
+            if self.move_to_next_page(pageno=pageno, sleep_delay=sleep_delay)==False:
+                break
 
     def search_and_copy_contributors(self, search_query, dest_organisation, sleep_delay=6):
         search_query = '+'.join(search_query.split())
