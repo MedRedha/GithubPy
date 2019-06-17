@@ -419,7 +419,7 @@ class GithubPy:
             sleep(delay_random)
             return True
         else:
-            print(next_link.text)
+            self.logger.info(next_link.text)
             return False
 
     def unfollow_users(self, amount, skip=100, sleep_delay=6):
@@ -462,7 +462,7 @@ class GithubPy:
                         self.logger.info('Unfollowed {} successfully'.format(unfollowed))
                         sleep(delay_random)
                     else:
-                        print(unfollow_button.get_attribute('value'))
+                        self.logger.info(unfollow_button.get_attribute('value'))
                     if unfollowed >= amount:
                         self.logger.warning('Too many unfollowed for today.. Returning')
                         return
@@ -502,13 +502,13 @@ class GithubPy:
         invited = 0
         for contributor_tag in contributors_tag:
             user = contributor_tag.get_attribute('href').split('/')[3]
-            print("Collected => {}".format(user))
+            self.logger.info("Collected => {}".format(user))
             users.append(user)
 
         re_loggedin = False
 
         for user in users:
-            print("Checking {}".format(user))
+            self.logger.info("Checking {}".format(user))
             web_address_navigator(self.browser, "https://github.com/orgs/{}/invitations/{}/edit".format(dest_organisation, user), Settings)
             try:
                 self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -520,22 +520,22 @@ class GithubPy:
                      .perform())
                     sleep(delay_random)
                     if self.browser.current_url=='https://github.com/orgs/socialbotspy/people':
-                        print('Invitation successfully sent')
+                        self.logger.info('Invitation successfully sent')
                         invited += 1
                 elif invite_button.text.strip()=='Update invitation':
-                    print('Already Invited')
+                    self.logger.info('Already Invited')
                 else:
-                    print(invite_button.text)
+                    self.logger.info(invite_button.text)
             except Exception as e:
                 self.logger.error(e)
                 if re_loggedin:
                     continue
-                print("Checking for password")
+                self.logger.info("Checking for password")
                 try:
                     input_password = self.browser.find_element_by_xpath('//*[@id="sudo_password"]')
                     if input_password:
-                        print("Password field found")
-                        print('entering input_password')
+                        self.logger.info("Password field found")
+                        self.logger.info('entering input_password')
                         (ActionChains(self.browser)
                          .move_to_element(input_password)
                          .click()
@@ -544,7 +544,7 @@ class GithubPy:
 
                         sleep(delay_random*0.3)
 
-                        print('submitting login_button')
+                        self.logger.info('submitting login_button')
                         login_button = self.browser.find_element_by_xpath('//*[@type="submit"]')
 
                         (ActionChains(self.browser)
@@ -558,10 +558,10 @@ class GithubPy:
                     self.logger.error(e)
                 #if password screen doesnt happen on first iteration it wont come, so lets make it true going forward
                 re_loggedin = True
-            print('Invitations sent in this iteration till now: {}'.format(invited))
-            print("=====")
+            self.logger.info('Invitations sent in this iteration till now: {}'.format(invited))
+            self.logger.info("=====")
             if invited >= 100:
-                print('Enough inviting for today.. Returning')
+                self.logger.info('Enough inviting for today.. Returning')
                 return
 
     def follow_by_list(self, followlist, times=1, sleep_delay=600, interact=False):
@@ -1380,7 +1380,7 @@ def smart_run(session):
         if session.login():
             yield
         else:
-            print("Not proceeding as login failed")
+            self.logger.info("Not proceeding as login failed")
 
     except (Exception, KeyboardInterrupt) as exc:
         if isinstance(exc, NoSuchElementException):
