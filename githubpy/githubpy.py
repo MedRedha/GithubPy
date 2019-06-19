@@ -478,91 +478,99 @@ class GithubPy:
 
     def search_and_copy_contributors(self, search_query, dest_organisation, sleep_delay=6):
         search_query = '+'.join(search_query.split())
-        web_address_navigator(self.browser, "https://github.com/search?l=Python&p=2&q={}&type=Repositories".format(search_query), Settings)
+        web_address_navigator(self.browser, "https://github.com/search?l=Python&q={}&type=Repositories".format(search_query), Settings)
         repo_tags = self.browser.find_elements_by_css_selector("div > div.codesearch-results > div > ul > li > div > h3 > a")
         hrefs = []
         for repo_tag in repo_tags:
             hrefs.append(repo_tag.get_attribute('href'))
 
+        total_count = 0
         for href in hrefs:
             print("Copying contributors of ~------> {}".format(href))
-            self.copy_contributors(source_user=href.split('/')[3],
+            count = self.copy_contributors(source_user=href.split('/')[3],
                     source_repo=href.split('/')[4],
                     dest_organisation=dest_organisation,
                     sleep_delay=sleep_delay)
+            total_count += count
+        return total_count
 
-    def copy_contributors(self, source_user, source_repo, dest_organisation, sleep_delay=6):
-        web_address_navigator(self.browser, "https://github.com/{}/{}/graphs/contributors".format(source_user, source_repo), Settings)
+    def invite_user(self, re_loggedin, dest_organisation, user, sleep_delay):
+        web_address_navigator(self.browser, "https://github.com/orgs/{}/invitations/{}/edit".format(dest_organisation, user), Settings)
         delay_random = random.randint(
             ceil(sleep_delay * 0.85),
             ceil(sleep_delay * 1.14))
+        try:
+            self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            invite_button = self.browser.find_element_by_css_selector("div.add-member-wrapper.settings-next > form > div.clearfix > button")
+            if invite_button.text.strip()=='Send invitation':
+                (ActionChains(self.browser)
+                 .move_to_element(invite_button)
+                 .click()
+                 .perform())
+                sleep(delay_random)
+                if self.browser.current_url=='https://github.com/orgs/socialbotspy/people':
+                    self.logger.info('Invitation successfully sent')
+                    return re_loggedin, True
+            elif invite_button.text.strip()=='Update invitation':
+                self.logger.info('Already Invited')
+            else:
+                self.logger.info(invite_button.text)
+        except Exception as e:
+            self.logger.error(e)
+            if re_loggedin:
+                return re_loggedin, False
+            self.logger.info("Checking for password")
+            try:
+                input_password = self.browser.find_element_by_xpath('//*[@id="sudo_password"]')
+                if input_password:
+                    self.logger.info("Password field found")
+                    self.logger.info('entering input_password')
+                    (ActionChains(self.browser)
+                     .move_to_element(input_password)
+                     .click()
+                     .send_keys(self.password)
+                     .perform())
 
+                    sleep(delay_random*0.3)
+
+                    self.logger.info('submitting login_button')
+                    login_button = self.browser.find_element_by_xpath('//*[@type="submit"]')
+
+                    (ActionChains(self.browser)
+                     .move_to_element(login_button)
+                     .click()
+                     .perform())
+
+                    sleep(delay_random)
+                    re_loggedin = True
+            except Exception as e:
+                self.logger.error(e)
+            #if password screen doesnt happen on first iteration it wont come, so lets make it true going forward
+            re_loggedin = True
+        return re_loggedin, False
+
+    def copy_contributors(self, source_user, source_repo, dest_organisation, sleep_delay=6):
+        web_address_navigator(self.browser, "https://github.com/{}/{}/graphs/contributors".format(source_user, source_repo), Settings)
         contributors_tag = self.browser.find_elements_by_css_selector("#contributors > ol > li > span > h3 > a.text-normal")
         users = []
-        invited = 0
         for contributor_tag in contributors_tag:
             user = contributor_tag.get_attribute('href').split('/')[3]
             self.logger.info("Collected => {}".format(user))
             users.append(user)
 
         re_loggedin = False
-
+        invited = 0
         for user in users:
             self.logger.info("Checking {}".format(user))
-            web_address_navigator(self.browser, "https://github.com/orgs/{}/invitations/{}/edit".format(dest_organisation, user), Settings)
-            try:
-                self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                invite_button = self.browser.find_element_by_css_selector("div.add-member-wrapper.settings-next > form > div.clearfix > button")
-                if invite_button.text.strip()=='Send invitation':
-                    (ActionChains(self.browser)
-                     .move_to_element(invite_button)
-                     .click()
-                     .perform())
-                    sleep(delay_random)
-                    if self.browser.current_url=='https://github.com/orgs/socialbotspy/people':
-                        self.logger.info('Invitation successfully sent')
-                        invited += 1
-                elif invite_button.text.strip()=='Update invitation':
-                    self.logger.info('Already Invited')
-                else:
-                    self.logger.info(invite_button.text)
-            except Exception as e:
-                self.logger.error(e)
-                if re_loggedin:
-                    continue
-                self.logger.info("Checking for password")
-                try:
-                    input_password = self.browser.find_element_by_xpath('//*[@id="sudo_password"]')
-                    if input_password:
-                        self.logger.info("Password field found")
-                        self.logger.info('entering input_password')
-                        (ActionChains(self.browser)
-                         .move_to_element(input_password)
-                         .click()
-                         .send_keys(self.password)
-                         .perform())
-
-                        sleep(delay_random*0.3)
-
-                        self.logger.info('submitting login_button')
-                        login_button = self.browser.find_element_by_xpath('//*[@type="submit"]')
-
-                        (ActionChains(self.browser)
-                         .move_to_element(login_button)
-                         .click()
-                         .perform())
-
-                        sleep(delay_random)
-                        re_loggedin = True
-                except Exception as e:
-                    self.logger.error(e)
-                #if password screen doesnt happen on first iteration it wont come, so lets make it true going forward
-                re_loggedin = True
+            re_loggedin, is_invited = self.invite_user(re_loggedin=re_loggedin, dest_organisation=dest_organisation, user=user, sleep_delay=sleep_delay)
+            if is_invited:
+                invited += 1
             self.logger.info('Invitations sent in this iteration till now: {}'.format(invited))
             self.logger.info("=====")
             if invited >= 100:
                 self.logger.info('Enough inviting for today.. Returning')
-                return
+                break
+        return invited
 
     def follow_by_list(self, followlist, times=1, sleep_delay=600, interact=False):
         """Allows to follow by any scrapped list"""
