@@ -17,7 +17,8 @@ pip install -r requirements.txt
   - [follow user following](#follow-user-following)
   - [copy contributors](#copy-contributors)
   - [search and copy contributors](#search-and-copy-contributors)
-  = [unfollow users](#unfollow-users)
+  - [cancel invites](#cancel-invites)
+  - [unfollow users](#unfollow-users)
 
 ### follow user followers
  
@@ -59,6 +60,7 @@ Invites all contributors of a given repo
                               dest_organisation="socialbotspy")
  ```
 
+
 ### search and copy contributors
 
 Same as above, just that you dont need to explicitly find repos. It uses `copy_contributors` internally
@@ -71,6 +73,17 @@ Same as above, just that you dont need to explicitly find repos. It uses `copy_c
     session.search_and_copy_contributors(search_query="instagram bot",
                                         dest_organisation="socialbotspy")
  ```
+
+### cancel invites
+
+```python
+
+ session = GithubPy()
+
+ with smart_run(session):
+    session.cancel_invites(dest_organisation="socialbotspy")
+ ```
+
 
 ### unfollow users
 

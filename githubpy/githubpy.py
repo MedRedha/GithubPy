@@ -476,6 +476,38 @@ class GithubPy:
             if self.move_to_next_page(pageno=pageno, sleep_delay=sleep_delay)==False:
                 break
 
+    def cancel_invites(self, dest_organisation, sleep_delay=6):
+        web_address_navigator(self.browser, "https://github.com/orgs/{}/people".format(dest_organisation), Settings)
+        delay_random = random.randint(
+            ceil(sleep_delay * 0.85),
+            ceil(sleep_delay * 1.14))
+        try:
+            pending_tag = self.browser.find_element_by_css_selector("#org-members-table > div.d-flex.flex-items-center.px-3.table-list-header.table-list-header-next.bulk-actions-header.js-sticky > div.table-list-header-toggle.d-flex.py-1 > details.details-reset.details-overlay.details-overlay-dark.lh-default.text-gray-dark.flex-self-center > summary")
+            print(pending_tag.text)
+            pending_tag.click()
+            sleep(delay_random)
+            invitees_tags = self.browser.find_elements_by_css_selector("#org-members-table > div.d-flex.flex-items-center.px-3.table-list-header.table-list-header-next.bulk-actions-header.js-sticky > div.table-list-header-toggle.d-flex.py-1 > details.details-reset.details-overlay.details-overlay-dark.lh-default.text-gray-dark.flex-self-center > details-dialog > div.Box-body.overflow-auto > ul > li > div > a.btn.btn-sm.edit-invitation")
+            print(len(invitees_tags))
+            users = []
+            for invitees_tag in invitees_tags:
+                user = invitees_tag.get_attribute('href').split('/')[6]
+                users.append(user)
+            re_loggedin = False
+            uninvited = 0
+            for user in users:
+                self.logger.info("Checking {}".format(user))
+                re_loggedin, is_uninvited = self.uninvite_user(re_loggedin=re_loggedin, dest_organisation=dest_organisation, user=user, sleep_delay=sleep_delay)
+                if is_uninvited:
+                    uninvited += 1
+                self.logger.info('Invitations cancelled in this iteration till now: {}'.format(uninvited))
+                self.logger.info("=====")
+                if uninvited >= 100:
+                    self.logger.info('Enough cancelling for today.. Returning')
+                    break
+            return uninvited
+        except Exception as e:
+            print(e)
+
     def search_and_copy_contributors(self, search_query, dest_organisation, sleep_delay=6):
         search_query = '+'.join(search_query.split())
         web_address_navigator(self.browser, "https://github.com/search?l=Python&q={}&type=Repositories".format(search_query), Settings)
@@ -493,6 +525,59 @@ class GithubPy:
                     sleep_delay=sleep_delay)
             total_count += count
         return total_count
+
+    def uninvite_user(self, re_loggedin, dest_organisation, user, sleep_delay):
+        web_address_navigator(self.browser, "https://github.com/orgs/{}/invitations/{}/edit".format(dest_organisation, user), Settings)
+        delay_random = random.randint(
+            ceil(sleep_delay * 0.85),
+            ceil(sleep_delay * 1.14))
+        try:
+            self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            cancel_button = self.browser.find_element_by_css_selector("form#cancel-invitation-form > button")
+            if cancel_button.text.strip()=='Cancel invitation':
+                (ActionChains(self.browser)
+                 .move_to_element(cancel_button)
+                 .click()
+                 .perform())
+                sleep(delay_random)
+                if self.browser.current_url=='https://github.com/orgs/socialbotspy/people':
+                    self.logger.info('Invitation successfully cancelled')
+                    return re_loggedin, True
+            else:
+                self.logger.info(cancel_button.text)
+        except Exception as e:
+            self.logger.error(e)
+            if re_loggedin:
+                return re_loggedin, False
+            self.logger.info("Checking for password")
+            try:
+                input_password = self.browser.find_element_by_xpath('//*[@id="sudo_password"]')
+                if input_password:
+                    self.logger.info("Password field found")
+                    self.logger.info('entering input_password')
+                    (ActionChains(self.browser)
+                     .move_to_element(input_password)
+                     .click()
+                     .send_keys(self.password)
+                     .perform())
+
+                    sleep(delay_random*0.3)
+
+                    self.logger.info('submitting login_button')
+                    login_button = self.browser.find_element_by_xpath('//*[@type="submit"]')
+
+                    (ActionChains(self.browser)
+                     .move_to_element(login_button)
+                     .click()
+                     .perform())
+
+                    sleep(delay_random)
+                    re_loggedin = True
+            except Exception as e:
+                self.logger.error(e)
+            #if password screen doesnt happen on first iteration it wont come, so lets make it true going forward
+            re_loggedin = True
+        return re_loggedin, False
 
     def invite_user(self, re_loggedin, dest_organisation, user, sleep_delay):
         web_address_navigator(self.browser, "https://github.com/orgs/{}/invitations/{}/edit".format(dest_organisation, user), Settings)
