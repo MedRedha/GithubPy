@@ -108,6 +108,9 @@ Same as above, just that you dont need to explicitly find repos. It uses `copy_c
     */10 * * * * bash /path/to/GithubPy/run_githubpy_only_once_for_mac.sh /path/to/GithubPy/quickstart.py $USERNAME $PASSWORD
 ```
 
+## Help build socialbotspy
+Check out this short guide on [how to start contributing!](https://github.com/InstaPy/instapy-docs/blob/master/CONTRIBUTORS.md).
+
 
 
 
