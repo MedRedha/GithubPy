@@ -9,7 +9,6 @@ PyVirtualDisplay == 0.2.1
 # githubpy/relationship_tools.py: 9
 # githubpy/unfollow_util.py: 11,12,15,16,17,18,19,20,22,25,27,28,29,31,32,33,34,37,38
 # quickstart.py: 6
-SocialCommons == 0.1.dev0
 
 # githubpy/githubpy.py: 14,66
 # githubpy/login_util.py: 5,18,19
