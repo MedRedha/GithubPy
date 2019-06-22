@@ -516,6 +516,7 @@ class GithubPy:
         for repo_tag in repo_tags:
             hrefs.append(repo_tag.get_attribute('href'))
 
+        print("Total Repositories for term {} found are : {}".format(search_query, len(hrefs)))
         total_count = 0
         for href in hrefs:
             print("Copying contributors of ~------> {}".format(href))

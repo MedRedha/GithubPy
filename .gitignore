@@ -6,6 +6,7 @@ assets/chromedriver.exe
 __pycache__/
 *.py[cod]
 *$py.class
+*.pickle
 
 docker_quickstart.py
 run_githubpy_only_once_for_mac_headed.sh
