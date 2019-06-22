@@ -586,7 +586,7 @@ class GithubPy:
             ceil(sleep_delay * 1.14))
         try:
             self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            invite_button = self.browser.find_element_by_css_selector("div.add-member-wrapper.settings-next > form > div.clearfix > button")
+            invite_button = self.browser.find_element_by_css_selector("div.add-member-wrapper.settings-next > form > div >  div > button")
             if invite_button.text.strip()=='Send invitation':
                 (ActionChains(self.browser)
                  .move_to_element(invite_button)
