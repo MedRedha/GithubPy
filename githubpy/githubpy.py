@@ -653,7 +653,7 @@ class GithubPy:
                 invited += 1
             self.logger.info('Invitations sent in this iteration till now: {}'.format(invited))
             self.logger.info("=====")
-            if invited >= 100:
+            if invited >= 10:
                 self.logger.info('Enough inviting for today.. Returning')
                 break
         return invited
