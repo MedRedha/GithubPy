@@ -108,7 +108,7 @@ github_password =  <your Github password>
 github_api_token = <your Github API token>
 ```
 
-```python
+```bash
  python download-contributors.py --repo https://github.com/timgrossmann/InstaPy
 ```
 It will download results in a file repo-owner_repo-name_contributors.csv
@@ -116,7 +116,7 @@ It will download results in a file repo-owner_repo-name_contributors.csv
 ### download forkers
 
 Create file config.txt as mentioned above
-```python
+```bash
  python download-forkers.py --repo https://github.com/timgrossmann/InstaPy
 ```
 It will download results in a file repo-owner_repo-name_forkers.csv
@@ -125,7 +125,7 @@ It will download results in a file repo-owner_repo-name_forkers.csv
 
 Create file config.txt as mentioned above
 
-```python
+```bash
  python download-issuers.py --repo https://github.com/timgrossmann/InstaPy
 ```
 It will download results in a file repo-owner_repo-name_issuers.csv
