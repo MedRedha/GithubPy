@@ -21,17 +21,17 @@ USER = constants.GITHUB_ID
 PASSWORD = constants.GITHUB_PASS
 GITHUB_SESSION_URL = 'https://github.com/session'
 
-def get_bio(s, profile_url, issue_url, issue_title, issue_detail):
-    html_source = s.get(profile_url).text
+def get_bio(s, profile_url, issue_url, issue_title, add_issue_detail):
     line = ''
     try:
+        html_source = s.get(profile_url).text
         parsed_html = BeautifulSoup(html_source, 'html.parser')
 
         username_val = profile_url.split('/')[-1]
         print('username:', username_val)
         line = line + username_val + ', '
 
-        if issue_detail:
+        if add_issue_detail:
             print('issue_url:', issue_url)
             line = line + issue_url + ', '
 
@@ -68,6 +68,7 @@ def get_bio(s, profile_url, issue_url, issue_title, issue_detail):
         line = line + '\n'
         print()
     except Exception:
+        print(profile_url, issue_url)
         traceback.print_exc()
     return line
 
@@ -125,12 +126,12 @@ def get_issues(root_url, max_page=5):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo')
-    parser.add_argument('--issue_detail', default=False)
+    parser.add_argument('--add_issue_detail', default=False)
     args = parser.parse_args()
     issues = get_issues(args.repo)
 
     with open(args.repo.split('/')[3] + '_' + args.repo.split('/')[4] + '_issuers.csv', 'w') as f:
-        if args.issue_detail:
+        if args.add_issue_detail:
             f.write('Username, IssueUrl, IssueTitle, Fullname, EmailAddress, Organisation\n')
         else:
             f.write('Username, Fullname, EmailAddress, Organisation\n')
@@ -153,8 +154,9 @@ def main():
                     s.post(GITHUB_SESSION_URL, data = login_data)
 
                     for profile_url in profile_urls:
-                        line = get_bio(s, profile_url, "https://github.com" + issue, issue_title, args.issue_detail)
+                        line = get_bio(s, profile_url, "https://github.com" + issue, issue_title, args.add_issue_detail)
                         file.write(bytes(line, 'UTF-8'))
+                        time.sleep(1)
 
             file = open('last_issuers.csv')
             lines.extend(list(set(file.readlines())))
