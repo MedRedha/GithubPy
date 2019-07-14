@@ -100,7 +100,7 @@ Same as above, just that you dont need to explicitly find repos. It uses `copy_c
 
 ### download contributors
 
-Create a file config.txt with following content
+Create a file `config.txt` with following content
 ```text
 [configuration]
 github_id = <your Github id>
@@ -111,24 +111,24 @@ github_api_token = <your Github API token>
 ```bash
  python download-contributors.py --repo https://github.com/timgrossmann/InstaPy
 ```
-It will download results in a file repo-owner_repo-name_contributors.csv
+It will download results in a file `repo-owner_repo-name_contributors.csv`
 
 ### download forkers
 
-Create file config.txt as mentioned above
+Create file `config.txt` as mentioned above
 ```bash
  python download-forkers.py --repo https://github.com/timgrossmann/InstaPy
 ```
-It will download results in a file repo-owner_repo-name_forkers.csv
+It will download results in a file `repo-owner_repo-name_forkers.csv`
 
 ### download issuers
 
-Create file config.txt as mentioned above
+Create file `config.txt` as mentioned above
 
 ```bash
  python download-issuers.py --repo https://github.com/timgrossmann/InstaPy
 ```
-It will download results in a file repo-owner_repo-name_issuers.csv
+It will download results in a file `repo-owner_repo-name_issuers.csv`
 
 ## How to run:
 
