@@ -91,7 +91,7 @@ def get_forkers_url(root_url):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--repo', default="https://github.com/thomasmesnard/DeepMind-Teaching-Machines-to-Read-and-Comprehend")
+    parser.add_argument('--repo')
     args = parser.parse_args()
     fork_urls = get_forkers_url(args.repo)
     with open(args.repo.split('/')[3] + '_' + args.repo.split('/')[4] + '_forkers.csv','wb') as file:

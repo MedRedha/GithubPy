@@ -21,7 +21,7 @@ USER = constants.GITHUB_ID
 PASSWORD = constants.GITHUB_PASS
 GITHUB_SESSION_URL = 'https://github.com/session'
 
-def get_bio(s, profile_url, issue_url, issue_title):
+def get_bio(s, profile_url, issue_url, issue_title, issue_detail):
     html_source = s.get(profile_url).text
     line = ''
     try:
@@ -31,11 +31,12 @@ def get_bio(s, profile_url, issue_url, issue_title):
         print('username:', username_val)
         line = line + username_val + ', '
 
-        print('issue_url:', issue_url)
-        line = line + issue_url + ', '
+        if issue_detail:
+            print('issue_url:', issue_url)
+            line = line + issue_url + ', '
 
-        print('issue_title:', issue_title)
-        line = line + issue_title + ', '
+            print('issue_title:', issue_title)
+            line = line + issue_title + ', '
 
         fullname = parsed_html.find("span", class_="vcard-fullname")
         if fullname is not None:
@@ -101,7 +102,7 @@ def get_issue_title(root_url):
         print("Unknown Error: " + root_url)
         print(e)
 
-def get_issues(root_url, max_page=10):
+def get_issues(root_url, max_page=5):
     ret = []
     for status in ["open", "closed"]:
         for page in range(1, max_page+1):
@@ -123,12 +124,16 @@ def get_issues(root_url, max_page=10):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--repo', default="https://github.com/gatech-csl/jes")
+    parser.add_argument('--repo')
+    parser.add_argument('--issue_detail', default=False)
     args = parser.parse_args()
     issues = get_issues(args.repo)
 
     with open(args.repo.split('/')[3] + '_' + args.repo.split('/')[4] + '_issuers.csv', 'w') as f:
-        f.write('Username, IssueUrl, IssueTitle, Fullname, EmailAddress, Organisation\n')
+        if args.issue_detail:
+            f.write('Username, IssueUrl, IssueTitle, Fullname, EmailAddress, Organisation\n')
+        else:
+            f.write('Username, Fullname, EmailAddress, Organisation\n')
         lines = []
         for issue in issues:
             profile_urls = get_issuers_profile_urls("https://github.com" + issue)
@@ -148,7 +153,7 @@ def main():
                     s.post(GITHUB_SESSION_URL, data = login_data)
 
                     for profile_url in profile_urls:
-                        line = get_bio(s, profile_url, "https://github.com" + issue, issue_title)
+                        line = get_bio(s, profile_url, "https://github.com" + issue, issue_title, args.issue_detail)
                         file.write(bytes(line, 'UTF-8'))
 
             file = open('last_issuers.csv')

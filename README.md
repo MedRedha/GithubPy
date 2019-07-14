@@ -126,9 +126,11 @@ It will download results in a file `repo-owner_repo-name_forkers.csv`
 Create file `config.txt` as mentioned above
 
 ```bash
- python download-issuers.py --repo https://github.com/timgrossmann/InstaPy
+ python download-issuers.py --repo https://github.com/timgrossmann/InstaPy --issue_detail True
 ```
 It will download results in a file `repo-owner_repo-name_issuers.csv`
+
+Note: option `issue_detail` is `False` by default ie Issue-title and Issue-url are not included.
 
 ## How to run:
 
