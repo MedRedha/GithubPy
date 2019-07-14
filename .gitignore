@@ -7,6 +7,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.pickle
+*.csv
 
 docker_quickstart.py
 run_githubpy_only_once_for_mac_headed.sh
@@ -118,3 +119,4 @@ z_*
 config.txt
 
 socialbotspy.py
+

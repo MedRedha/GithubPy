@@ -288,7 +288,7 @@ class GithubPy:
             file_handler.setLevel(logging.DEBUG)
             extra = {"username": self.username}
             logger_formatter = logging.Formatter(
-                '%(levelname)s [%(asctime)s] [%(username)s]  %(message)s',
+                '%(levelname)s [%(asctime)s] [GithubPy:%(username)s]  %(message)s',
                 datefmt='%Y-%m-%d %H:%M:%S')
             file_handler.setFormatter(logger_formatter)
             logger.addHandler(file_handler)
@@ -534,7 +534,7 @@ class GithubPy:
             ceil(sleep_delay * 1.14))
         try:
             self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            cancel_button = self.browser.find_element_by_css_selector("form#cancel-invitation-form > button")
+            cancel_button = self.browser.find_element_by_css_selector("form > div > div > button.btn-danger")
             if cancel_button.text.strip()=='Cancel invitation':
                 (ActionChains(self.browser)
                  .move_to_element(cancel_button)

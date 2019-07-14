@@ -4,13 +4,40 @@
 # githubpy/githubpy.py: 16
 PyVirtualDisplay == 0.2.1
 
-# githubpy/githubpy.py: 28,29,31,34,35,36,37,39,40,41,57,60,61,62,63,67
-# githubpy/login_util.py: 8,9,10,11,12,13
-# githubpy/relationship_tools.py: 9
-# githubpy/unfollow_util.py: 11,12,15,16,17,18,19,20,22,25,27,28,29,31,32,33,34,37,38
-# quickstart.py: 6
+# download-contributors.py: 2
+# download-forkers.py: 2
+# download-issuers.py: 2
+bs4 == 0.0.1
+
+# constants.py: 2
+configparser == 3.5.0
+
+# download-contributors.py: 9
+# download-forkers.py: 9
+# download-issuers.py: 9
+lxml == 3.7.3
+
+# download-contributors.py: 19
+# download-forkers.py: 18
+# download-issuers.py: 18
+remembrall == 0.0.3
+
+# download-contributors.py: 1,15
+# download-forkers.py: 1,15
+# download-issuers.py: 1,15
+requests == 2.21.0
 
 # githubpy/githubpy.py: 14,66
 # githubpy/login_util.py: 5,18,19
 # githubpy/unfollow_util.py: 42,43
 selenium == 3.141.0
+
+# download-contributors.py: 19
+# download-forkers.py: 18
+# download-issuers.py: 18
+shallow-backup == 2.4
+
+# download-contributors.py: 19
+# download-forkers.py: 18
+# download-issuers.py: 18
+stronghold == 1.5

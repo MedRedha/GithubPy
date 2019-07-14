@@ -19,6 +19,9 @@ pip install -r requirements.txt
   - [search and copy contributors](#search-and-copy-contributors)
   - [cancel invites](#cancel-invites)
   - [unfollow users](#unfollow-users)
+  - [download contributors](#download-contributors)
+  - [download forkers](#download-forkers)
+  - [download issuers](#download-issuers)
 
 ### follow user followers
  
@@ -95,6 +98,37 @@ Same as above, just that you dont need to explicitly find repos. It uses `copy_c
     session.unfollow_users(amount=random.randint(30, 50), skip=100)
  ```
 
+### download contributors
+
+Create a file config.txt with following content
+```text
+[configuration]
+github_id = <your Github id>
+github_password =  <your Github password>
+github_api_token = <your Github API token>
+```
+
+```python
+ python download-contributors.py --repo https://github.com/timgrossmann/InstaPy
+```
+It will download results in a file repo-owner_repo-name_contributors.csv
+
+### download forkers
+
+Create file config.txt as mentioned above
+```python
+ python download-forkers.py --repo https://github.com/timgrossmann/InstaPy
+```
+It will download results in a file repo-owner_repo-name_forkers.csv
+
+### download issuers
+
+Create file config.txt as mentioned above
+
+```python
+ python download-issuers.py --repo https://github.com/timgrossmann/InstaPy
+```
+It will download results in a file repo-owner_repo-name_issuers.csv
 
 ## How to run:
 
