@@ -16,13 +16,13 @@ from requests import session
 
 import argparse
 import constants
+import pprint as pp
 
 USER = constants.GITHUB_ID
 PASSWORD = constants.GITHUB_PASS
 GITHUB_SESSION_URL = 'https://github.com/session'
 
-def get_bio(s, fork_url):
-    profile_url = '/'.join(fork_url.split('/')[0:-1])
+def get_bio(s, profile_url):
     html_source = s.get(profile_url).text
     line = ''
     try:
@@ -32,8 +32,8 @@ def get_bio(s, fork_url):
         print('username:', username_val)
         line = line + username_val + ', '
 
-        print('repourl:', fork_url)
-        line = line + fork_url + ', '
+        print('repourl:', profile_url)
+        line = line + profile_url + ', '
 
         fullname = parsed_html.find("span", class_="vcard-fullname")
         if fullname is not None:
@@ -68,33 +68,46 @@ def get_bio(s, fork_url):
         traceback.print_exc()
     return line
 
-def get_forkers_url(root_url):
-    mem_url = root_url + "/network/members"
-    fork_urls = []
-    try:
-        req = Request(mem_url , headers={'User-Agent': 'Mozilla/5.0'})
-        html_source = urlopen(req).read()
-        parsed_html = BeautifulSoup(html_source, 'html.parser')
-        forks = parsed_html.find_all("div", class_="repo")
-        for fork in forks:
-            links = fork.find_all("a", class_="")
-            for l in links:
-                if len(l['href'].split('/')) > 2:
-                    fork_urls.append("https://github.com" + l['href'])
-    except urllib.error.URLError as e:
-        print("Seems URL changed for: " + mem_url)
-        print(e)
-    except Exception as e:
-        print("Unknown Error: " + mem_url)
-        print(e)
-    return fork_urls
+def get_stargazers_url(root_url, max_page=5):
+    mem_url = root_url + "/stargazers"
+    profile_urls = []
+    ctr = 0
+    while mem_url and ctr<max_page:
+        ctr += 1
+        try:
+            print("Vising:", mem_url)
+            req = Request(mem_url , headers={'User-Agent': 'Mozilla/5.0'})
+            html_source = urlopen(req).read()
+            parsed_html = BeautifulSoup(html_source, 'html.parser')
+            stars = parsed_html.find_all("h3", class_="follow-list-name")
+            for star in stars:
+                links = star.find_all("a", class_="")
+                for l in links:
+                    if len(l['href'].split('/')) == 2:
+                        profile_urls.append("https://github.com" + l['href'])
+
+            footer_links = parsed_html.find_all("a", class_="btn btn-outline BtnGroup-item")
+            for footer_link in footer_links:
+                button_text = footer_link.find(text=True, recursive=False)
+                if button_text=="Next":
+                    mem_url= footer_link['href']
+                else:
+                    mem_url=None
+        except urllib.error.URLError as e:
+            print("Seems URL changed for: " + mem_url)
+            print(e)
+        except Exception as e:
+            print("Unknown Error: " + mem_url)
+            print(e)
+    return profile_urls
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo')
     args = parser.parse_args()
-    fork_urls = get_forkers_url(args.repo)
-    with open(args.repo.split('/')[3] + '_' + args.repo.split('/')[4] + '_forkers.csv','wb') as file:
+    profile_urls = get_stargazers_url(args.repo)
+    # pp.pprint(profile_urls)
+    with open(args.repo.split('/')[3] + '_' + args.repo.split('/')[4] + '_stargazers.csv','wb') as file:
         file.write(bytes('Username, RepoUrl, Fullname, EmailAddress, Organisation\n', 'UTF-8'))
         with session() as s:
             req = s.get(GITHUB_SESSION_URL).text
@@ -109,9 +122,10 @@ def main():
 
             s.post(GITHUB_SESSION_URL, data = login_data)
 
-            for fork_url in fork_urls:
-                line = get_bio(s, fork_url)
+            for profile_url in profile_urls:
+                line = get_bio(s, profile_url)
                 file.write(bytes(line, 'UTF-8'))
+                time.sleep(2)
 
 if __name__ == '__main__':
     main()

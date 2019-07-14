@@ -21,6 +21,7 @@ pip install -r requirements.txt
   - [unfollow users](#unfollow-users)
   - [download contributors](#download-contributors)
   - [download forkers](#download-forkers)
+  - [download stargazers](#download-stargazers)
   - [download issuers](#download-issuers)
 
 ### follow user followers
@@ -120,6 +121,14 @@ Create file `config.txt` as mentioned above
  python download-forkers.py --repo https://github.com/timgrossmann/InstaPy
 ```
 It will download results in a file `repo-owner_repo-name_forkers.csv`
+
+### download stargazers
+
+Create file `config.txt` as mentioned above
+```bash
+ python download-stargazers.py --repo https://github.com/timgrossmann/InstaPy
+```
+It will download results in a file `repo-owner_repo-name_stargazers.csv`
 
 ### download issuers
 

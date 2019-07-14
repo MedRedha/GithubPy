@@ -156,7 +156,7 @@ def main():
                     for profile_url in profile_urls:
                         line = get_bio(s, profile_url, "https://github.com" + issue, issue_title, args.add_issue_detail)
                         file.write(bytes(line, 'UTF-8'))
-                        time.sleep(1)
+                        time.sleep(2)
 
             file = open('last_issuers.csv')
             lines.extend(list(set(file.readlines())))
