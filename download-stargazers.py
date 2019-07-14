@@ -17,6 +17,7 @@ from requests import session
 import argparse
 import constants
 import pprint as pp
+import random
 
 USER = constants.GITHUB_ID
 PASSWORD = constants.GITHUB_PASS
@@ -68,11 +69,11 @@ def get_bio(s, profile_url):
         traceback.print_exc()
     return line
 
-def get_stargazers_url(root_url, max_page=5):
+def get_stargazers_url(root_url, max_page):
     mem_url = root_url + "/stargazers"
     profile_urls = []
     ctr = 0
-    while mem_url and ctr<max_page:
+    while mem_url and ctr < max_page:
         ctr += 1
         try:
             print("Vising:", mem_url)
@@ -104,8 +105,9 @@ def get_stargazers_url(root_url, max_page=5):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo')
+    parser.add_argument('--max_page', default=5)
     args = parser.parse_args()
-    profile_urls = get_stargazers_url(args.repo)
+    profile_urls = get_stargazers_url(args.repo, args.max_page)
     # pp.pprint(profile_urls)
     with open(args.repo.split('/')[3] + '_' + args.repo.split('/')[4] + '_stargazers.csv','wb') as file:
         file.write(bytes('Username, RepoUrl, Fullname, EmailAddress, Organisation\n', 'UTF-8'))
@@ -125,7 +127,7 @@ def main():
             for profile_url in profile_urls:
                 line = get_bio(s, profile_url)
                 file.write(bytes(line, 'UTF-8'))
-                time.sleep(2)
+                time.sleep(random.randint(4, 8))
 
 if __name__ == '__main__':
     main()

@@ -126,20 +126,27 @@ It will download results in a file `repo-owner_repo-name_forkers.csv`
 
 Create file `config.txt` as mentioned above
 ```bash
- python download-stargazers.py --repo https://github.com/timgrossmann/InstaPy
+ python download-stargazers.py --repo https://github.com/timgrossmann/InstaPy --max_page 7
 ```
 It will download results in a file `repo-owner_repo-name_stargazers.csv`
+
+Note:
+- option `max_page` is 5 by default
 
 ### download issuers
 
 Create file `config.txt` as mentioned above
 
 ```bash
- python download-issuers.py --repo https://github.com/timgrossmann/InstaPy --add_issue_detail True
+ python download-issuers.py --repo https://github.com/timgrossmann/InstaPy --add_issue_detail True --start_page 2 --end_page 6
 ```
 It will download results in a file `repo-owner_repo-name_issuers.csv`
 
-Note: option `add_issue_detail` is `False` by default ie Issue-title and Issue-url are not included.
+Note:
+- option `add_issue_detail` is `False` by default ie Issue-title and Issue-url are not included.
+- option `start_page` is 1 by default
+- option `end_page` is 5 by default
+
 
 ## How to run:
 

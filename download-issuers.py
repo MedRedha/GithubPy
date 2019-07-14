@@ -16,6 +16,7 @@ from requests import session
 
 import argparse
 import constants
+import random
 
 USER = constants.GITHUB_ID
 PASSWORD = constants.GITHUB_PASS
@@ -103,10 +104,10 @@ def get_issue_title(root_url):
         print("Unknown Error: " + root_url)
         print(e)
 
-def get_issues(root_url, max_page=5):
+def get_issues(root_url, start_page=1, end_page=5):
     ret = []
     for status in ["open", "closed"]:
-        for page in range(1, max_page+1):
+        for page in range(min_page, end_page+1):
             try:
                 issues_url = root_url + '/issues?page=' + str(page) + '&q=is%3Aissue+is%3A' + status
                 req = Request(issues_url , headers={'User-Agent': 'Mozilla/5.0'})
@@ -127,8 +128,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo')
     parser.add_argument('--add_issue_detail', default=False)
+    parser.add_argument('--start_page', default=1)
+    parser.add_argument('--end_page', default=5)
     args = parser.parse_args()
-    issues = get_issues(args.repo)
+    issues = get_issues(args.repo, args.start_page, args.end_page)
 
     with open(args.repo.split('/')[3] + '_' + args.repo.split('/')[4] + '_issuers.csv', 'w') as f:
         if args.add_issue_detail:
@@ -156,7 +159,7 @@ def main():
                     for profile_url in profile_urls:
                         line = get_bio(s, profile_url, "https://github.com" + issue, issue_title, args.add_issue_detail)
                         file.write(bytes(line, 'UTF-8'))
-                        time.sleep(2)
+                        time.sleep(random.randint(4, 8))
 
             file = open('last_issuers.csv')
             lines.extend(list(set(file.readlines())))
