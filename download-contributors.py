@@ -24,9 +24,9 @@ GITHUB_SESSION_URL = 'https://github.com/session'
 headers = {'Authorization': 'token %s' % constants.GITHUB_API_TOKEN}
 
 def get_bio(s, profile_url):
-    html_source = s.get(profile_url).text
     line = ''
     try:
+        html_source = s.get(profile_url).text
         parsed_html = BeautifulSoup(html_source, 'html.parser')
 
         username_val = profile_url.split('/')[-1]
@@ -75,7 +75,7 @@ def main():
     args = parser.parse_args()
     url = args.repo
     url = url.replace('https://github.com/', 'https://api.github.com/repos/')
-    url = url + '/contributors'
+    url = url + '/contributors?per_page=1000'
     r = requests.get(url, headers=headers)
     repo_items = json.loads(r.text or r.content)
 
@@ -97,9 +97,9 @@ def main():
             s.post(GITHUB_SESSION_URL, data = login_data)
 
             for repo_item in repo_items:
-                # print(repo_item['html_url'])
                 line = get_bio(s, repo_item['html_url'])
                 file.write(bytes(line, 'UTF-8'))
+                time.sleep(2)
 
 if __name__ == '__main__':
-  main()
+    main()
