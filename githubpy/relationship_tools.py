@@ -1,20 +1,6 @@
-# import time
-# from datetime import datetime
-# import os
-# import glob
-# import random
-# import json
 
-# from socialcommons.time_util import sleep
 from socialcommons.util import web_address_navigator
-# from socialcommons.util import get_relationship_counts
-# from socialcommons.util import interruption_handler
-# from socialcommons.util import truncate_float
-# from socialcommons.util import progress_tracker
 from .settings import Settings
-
-# from selenium.common.exceptions import NoSuchElementException
-
 
 def get_followers(browser,
                   username,

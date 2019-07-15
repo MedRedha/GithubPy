@@ -1,19 +1,8 @@
-import os, sys, unittest, time, re, requests
 from bs4 import BeautifulSoup
 import traceback
-
-import json
-import hashlib
 import urllib.error
-from urllib.request import Request, urlopen, build_opener, install_opener, HTTPBasicAuthHandler, HTTPPasswordMgrWithDefaultRealm
-from lxml import etree
-import csv
-import time
-import logging
-from datetime import date, timedelta
-import subprocess
+from urllib.request import Request, urlopen
 from requests import session
-
 import argparse
 import constants
 

@@ -4,17 +4,13 @@ import time
 import pickle
 from selenium.webdriver.common.action_chains import ActionChains
 
-# import GithubPy modules
 from socialcommons.time_util import sleep
 from socialcommons.util import update_activity
 from socialcommons.util import web_address_navigator
 from socialcommons.util import reload_webpage
-from socialcommons.util import click_element
 from socialcommons.util import explicit_wait
-# from socialcommons.util import check_authorization
 from .settings import Settings
 
-# import exceptions
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 

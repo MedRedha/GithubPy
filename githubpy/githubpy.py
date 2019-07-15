@@ -3,66 +3,40 @@
 import time
 from math import ceil
 import random
-# from sys import platform
-# from platform import python_version
 import os
-# import csv
-# import json
-# import requests
-# from selenium import webdriver
-# from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.common.action_chains import ActionChains
 
 from pyvirtualdisplay import Display
 import logging
 from contextlib import contextmanager
-# from copy import deepcopy
 import unicodedata
 from sys import exit as clean_exit
 from tempfile import gettempdir
 
-# import GithubPy modules
-# from socialcommons.clarifai_util import check_image
 from .login_util import login_user
-# from .settings import Settings
 from socialcommons.print_log_writer import log_follower_num
 from socialcommons.print_log_writer import log_following_num
 
 from socialcommons.time_util import sleep
-# from socialcommons.time_util import set_sleep_percentage
-# from socialcommons.util import get_active_users
 from socialcommons.util import validate_userid
 from socialcommons.util import web_address_navigator
 from socialcommons.util import interruption_handler
 from socialcommons.util import highlight_print
-# from socialcommons.util import dump_record_activity
 from socialcommons.util import truncate_float
 from socialcommons.util import save_account_progress
 from socialcommons.util import parse_cli_args
 from .unfollow_util  import get_given_user_followers
 from .unfollow_util  import get_given_user_following
-# from .unfollow_util  import unfollow
 from .unfollow_util  import unfollow_user
 from .unfollow_util  import follow_user
 from .unfollow_util  import follow_restriction
 from .unfollow_util  import dump_follow_restriction
-# from .unfollow_util  import set_automated_followed_pool
-# from .unfollow_util  import get_follow_requests
-# from .relationship_tools import get_following
-# from .relationship_tools import get_followers
-# from .relationship_tools import get_unfollowers
-# from .relationship_tools import get_nonfollowers
-# from .relationship_tools import get_fans
-# from .relationship_tools import get_mutual_following
 from socialcommons.database_engine import get_database
-# from socialcommons.text_analytics import text_analysis
-# from socialcommons.text_analytics import yandex_supported_languages
 from socialcommons.browser import set_selenium_local_session
 from socialcommons.browser import close_browser
 from socialcommons.file_manager import get_workspace
 from socialcommons.file_manager import get_logfolder
 
-# import exceptions
 from selenium.common.exceptions import NoSuchElementException
 from socialcommons.exceptions import SocialPyError
 from .settings import Settings
@@ -1474,7 +1448,7 @@ def smart_run(session):
         if session.login():
             yield
         else:
-            self.logger.info("Not proceeding as login failed")
+            print("Not proceeding as login failed")
 
     except (Exception, KeyboardInterrupt) as exc:
         if isinstance(exc, NoSuchElementException):

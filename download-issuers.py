@@ -1,19 +1,9 @@
-import os, sys, unittest, time, re, requests
+import time, os
 from bs4 import BeautifulSoup
 import traceback
-
-import json
-import hashlib
 import urllib.error
-from urllib.request import Request, urlopen, build_opener, install_opener, HTTPBasicAuthHandler, HTTPPasswordMgrWithDefaultRealm
-from lxml import etree
-import csv
-import time
-import logging
-from datetime import date, timedelta
-import subprocess
+from urllib.request import Request, urlopen
 from requests import session
-
 import argparse
 import constants
 import random
@@ -107,7 +97,7 @@ def get_issue_title(root_url):
 def get_issues(root_url, start_page=1, end_page=5):
     ret = []
     for status in ["open", "closed"]:
-        for page in range(min_page, end_page+1):
+        for page in range(start_page, end_page+1):
             try:
                 issues_url = root_url + '/issues?page=' + str(page) + '&q=is%3Aissue+is%3A' + status
                 req = Request(issues_url , headers={'User-Agent': 'Mozilla/5.0'})
