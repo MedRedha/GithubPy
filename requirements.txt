@@ -7,6 +7,7 @@ PyVirtualDisplay == 0.2.1
 # download-contributors.py: 2
 # download-forkers.py: 2
 # download-issuers.py: 2
+# download-stargazers.py: 2
 bs4 == 0.0.1
 
 # constants.py: 2
@@ -15,16 +16,19 @@ configparser == 3.5.0
 # download-contributors.py: 9
 # download-forkers.py: 9
 # download-issuers.py: 9
+# download-stargazers.py: 9
 lxml == 3.7.3
 
 # download-contributors.py: 19
 # download-forkers.py: 18
 # download-issuers.py: 18
+# download-stargazers.py: 18
 remembrall == 0.0.3
 
 # download-contributors.py: 1,15
 # download-forkers.py: 1,15
 # download-issuers.py: 1,15
+# download-stargazers.py: 1,15
 requests == 2.21.0
 
 # githubpy/githubpy.py: 14,66
@@ -35,9 +39,11 @@ selenium == 3.141.0
 # download-contributors.py: 19
 # download-forkers.py: 18
 # download-issuers.py: 18
+# download-stargazers.py: 18
 shallow-backup == 2.4
 
 # download-contributors.py: 19
 # download-forkers.py: 18
 # download-issuers.py: 18
+# download-stargazers.py: 18
 stronghold == 1.5
