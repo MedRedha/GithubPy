@@ -24,13 +24,13 @@ bs4 == 0.0.1
 # download-stargazers.py: 6
 requests == 2.21.0
 
+# githubpy/githubpy.py: 7,40
+# githubpy/login_util.py: 5,14,15
+# githubpy/unfollow_util.py: 28,29
+selenium == 3.141.0
+
 # download-contributors.py: 10
 # download-forkers.py: 7
 # download-issuers.py: 8
 # download-stargazers.py: 8
 stronghold == 1.5
-
-# githubpy/githubpy.py: 7,40
-# githubpy/login_util.py: 5,14,15
-# githubpy/unfollow_util.py: 28,29
-~~lenium == 3.0.2
