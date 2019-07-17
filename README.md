@@ -11,13 +11,15 @@ pyenv local 3.6.0
 pip install -r requirements.txt
 ```
 
-##  APIs:
+##  Interact APIs:
   - [follow user followers](#follow-user-followers)
   - [follow user following](#follow-user-following)
   - [copy contributors](#copy-contributors)
   - [search and copy contributors](#search-and-copy-contributors)
   - [cancel invites](#cancel-invites)
   - [unfollow users](#unfollow-users)
+
+##  Download APIs:
   - [download contributors](#download-contributors)
   - [download forkers](#download-forkers)
   - [download stargazers](#download-stargazers)
